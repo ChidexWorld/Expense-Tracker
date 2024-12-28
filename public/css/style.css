@@ -1,0 +1,60 @@
+body {
+    padding: 0 5rem;
+    margin: 0;  
+    box-sizing: border-box;
+    background-color: rgb(236, 233, 233);
+}
+
+h2 {
+    font-weight: 800;
+    color: blue;
+}
+
+ul {
+    display: flex;
+    list-style-type: none;
+    width: 30rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+li{
+    cursor: pointer;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn1,
+.btn2 {
+    background-color: blue;
+    color: white;
+    height: 2rem;
+    width: 6rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn2 {
+    height: 2.5rem;
+    width: 7rem;
+}
+
+.text {
+    width: 20rem;
+}
+
+.chartImage {
+    width: 30rem;
+}
+
+main {
+    display: flex;
+    height: 30rem;
+    align-items: center;
+    justify-content: space-between;
+}

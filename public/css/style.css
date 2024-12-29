@@ -1,6 +1,6 @@
 body {
     padding: 0 5rem;
-    margin: 0;  
+    margin: 0;
     box-sizing: border-box;
     background-color: rgb(236, 233, 233);
 }
@@ -18,7 +18,7 @@ ul {
     justify-content: space-between;
 }
 
-li{
+li {
     cursor: pointer;
 }
 
@@ -57,4 +57,67 @@ main {
     height: 30rem;
     align-items: center;
     justify-content: space-between;
+}
+
+.reg-section {
+    border: red solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+form {
+    width: 45rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.signupImg {
+    width: 30rem;
+}
+
+.reg-section>h1 {
+    color: blue;
+    text-align: center;
+    font-size: 3rem;
+}
+
+.reg-section h2 {
+    color: black;
+    font-size: 2.3rem;
+}
+
+label {
+    font-size: 1.5rem;
+}
+
+input {
+    width: 100%;
+    margin-top: 1rem;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    height: 2rem;
+    font-size: 1rem;
+}
+
+form>div>div {
+    margin-bottom: 2rem;
+}
+
+.submitBtn{
+    background-color: green;
+        color: white;
+        height: 3rem;
+        width: 12rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
 }

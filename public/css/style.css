@@ -60,7 +60,6 @@ main {
 }
 
 .reg-section {
-    border: red solid;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,8 +73,10 @@ form {
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    box-shadow: 10px 10px 5px -3px rgba(156, 154, 154, 0.75);   
 }
-
 
 .signupImg {
     width: 30rem;
@@ -110,14 +111,19 @@ form>div>div {
     margin-bottom: 2rem;
 }
 
-.submitBtn{
+.submitBtn {
     background-color: green;
-        color: white;
-        height: 3rem;
-        width: 12rem;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
+    color: white;
+    height: 3rem;
+    width: 12rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+form a {
+    font-size: 1.2rem;
+    text-decoration: none;
 }

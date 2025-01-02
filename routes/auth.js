@@ -5,6 +5,24 @@ const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 var passport = require("passport");
 var LocalStrategy = require("passport-local");
+var session = require("express-session");
+const crypto = require("crypto");
+
+
+
+// Express-Session Configuration
+router.use(
+  session({
+   secret: crypto.randomBytes(30).toString("hex"),
+    resave: false,             
+    saveUninitialized: false,  
+  })
+);
+
+// Initialize Passport and use it with Express-Session
+router.use(passport.initialize());
+router.use(passport.session());
+
 
 router.get("/signUp", (req, res) => {
   //   res.render("register", { errors: {} });
@@ -115,35 +133,10 @@ router.post("/registerUser", (req, res) => {
           return res.redirect("login");
         });
       });
-    }
-  );
-
-  console.log(username);
-
-  //hash password
-  bcrypt.hash(password, saltRounds, function (err, hash) {
-    // Store hash in your password DB.
-    if (err) {
-      console.error("Error while hashing the password:", err);
-      return res.render("error", { error: err });
-    }
-    console.log(hash);
-
-    const query =
-      "INSERT INTO users (username,email, password) VALUES (?, ?, ?)";
-
-    db.query(query, [username, email, hash], (err, result) => {
-      //error handling
-      if (err) {
-        console.error("Error inserting user:", err); // Log the error
-        if (err) return res.render("error", { error: err });
-        // Send error response
-      }
-      console.log("User registered with ID:", result.insertId);
-      return res.redirect("login");
     });
-  });
-});
+
+  res.sendStatus(200);
+ });
 
 //login algorithm using passport
 passport.use(
@@ -226,7 +219,7 @@ router.post(
   "/loginUser",
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/auth/login",
+    failureRedirect: "/login",
   })
 );
 

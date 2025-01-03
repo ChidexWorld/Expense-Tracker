@@ -32,11 +32,7 @@ router.get("/signUp", (req, res) => {
 //register the user and hash them with passport
 router.post("/registerUser", (req, res) => {
   let { username, email, password, confirm } = req.body;
-  console.log(req.body.confirm);
-  console.log(req.body.username);
-  console.log(req.body.email);
-  console.log(req.body.password);
-
+ 
   // trimming the fields
   username = username.trim();
   email = email.trim();
@@ -222,6 +218,8 @@ router.post(
     failureRedirect: "/login",
   })
 );
+
+
 
 
 module.exports = router;

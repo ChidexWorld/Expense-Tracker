@@ -6,6 +6,7 @@ const PORT = 3000;
 
 //import routes
 const authRoutes = require("./routes/auth");
+const forgetRoutes = require('./routes/forget')
 
 
 // Set EJS as the template engine
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Use the router
 app.use( authRoutes);
+app.use(forgetRoutes);
 
 app.get("/", (req, res) => {
   res.render("home", { title: "Welcome to EJS Project!" });

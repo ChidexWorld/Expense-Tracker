@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forget password tracker</title>
+    <title>Confirm OTP</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -14,19 +14,19 @@
         <h1>Expense Tracker</h1>
 
         <form action="/forget-password" method="POST" enctype="application/x-www-form-urlencoded">
-            <h2>Enter Email account</h2>
+            <h2>Verify OTP</h2>
 
             <div>
                 <div>
-                    <input type="email" name="email" id="email" placeholder="JohnDeo@gmail.com" required>
+                    <input type="num" name="num" id="num" placeholder="00000" required>
                     <br>
                 </div>
 
             </div>
 
-            <button type="submit" class="submitBtn">Send OTP</button>
+            <button type="submit" class="submitBtn">Verify OTP</button>
             <div>
-                <a href="http://localhost:3000/">Go back to login</a>
+                <a href="http://localhost:3000/">Resend OTP</a>
             </div>
 
         </form>

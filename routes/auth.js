@@ -131,7 +131,6 @@ router.post("/registerUser", (req, res) => {
       });
     });
 
-  res.sendStatus(200);
  });
 
 //login algorithm using passport

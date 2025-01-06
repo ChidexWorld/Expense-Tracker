@@ -13,12 +13,14 @@
     <section class="reg-section">
         <h1>Expense Tracker</h1>
 
-        <form action="/forget-password" method="POST" enctype="application/x-www-form-urlencoded">
+        <form action="/verify-code" method="POST" enctype="application/x-www-form-urlencoded">
             <h2>Verify OTP</h2>
 
             <div>
+                <input type="hidden" name="token" value="<%= token %>"> 
+
                 <div>
-                    <input type="num" name="num" id="num" placeholder="00000" required>
+                    <input type="num" name="code" id="num" placeholder="00000" required>
                     <br>
                 </div>
 

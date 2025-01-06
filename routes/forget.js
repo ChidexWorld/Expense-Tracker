@@ -2,8 +2,20 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 const crypto = require("crypto");
+
+// Utility function to generate a random 6-digit code
+function generateCode() {
+  return String(Math.floor(100000 + Math.random() * 900000)); // 6-digit code
+}
+
+function createTemporaryToken(userId) {
+  const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
+  return jwt.sign({ userId }, secret, { expiresIn: "15m" }); //15-minute validity
+}
+
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 router.get("/forgetPassword", (req, res) => {
   //   res.render("register", { errors: {} });
@@ -11,8 +23,12 @@ router.get("/forgetPassword", (req, res) => {
 });
 
 router.get("/confirmOTP", (req, res) => {
+  const { token } = req.query; // Get the token from the query
+
+  console.log(token);
+
   //   res.render("register", { errors: {} });
-  res.render("confirmOTP", { title: "Register Page" });
+  res.render("confirmOTP", { token });
 });
 
 router.post("/forget-password", (req, res) => {
@@ -56,11 +72,6 @@ router.post("/forget-password", (req, res) => {
     }
 
     console.log("Email is available");
-
-    //Create a random, secure code
-    function generateCode() {
-      return String(Math.floor(100000 + Math.random() * 900000)); // 6-digit code
-    }
 
     console.log(generateCode());
 
@@ -117,33 +128,49 @@ router.post("/forget-password", (req, res) => {
     // });
 
     // In /forget-password route, after sending the email
-    res.redirect(`/confirmOTP?userId=${userId}`); // Redirecting to confirmOTP with userId
+    res.redirect(`/confirmOTP?token=${createTemporaryToken(userId)}`); // Redirecting to confirmOTP with userId
+
+    // res.redirect(`/confirmOTP?userId=${userId}`);
   });
 });
 
 router.post("/verify-code", (req, res) => {
-  const { userId, code } = req.body;
+  const { token, code } = req.body;
 
-  // Query the database to fetch the code for the user
-  db.query(
-    "SELECT * FROM user_codes WHERE user_id = ? AND code = ? AND expires_at > NOW()",
-    [userId, code],
-    (error, results) => {
-      if (error) {
-        console.error("Database error:", error);
-        return res.status(500).json({ message: "Database error" });
+  console.log(token);
+  if (!token || !code) {
+    return res.status(400).json({ message: "Token and code are required" });
+  }
+
+  try {
+    const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
+    const decoded = jwt.verify(token, secret);
+
+    const userId = decoded.userId;
+
+    // Query the database to fetch the code for the user
+    db.query(
+      "SELECT * FROM user_codes WHERE user_id = ? AND code = ? AND expires_at > NOW()",
+      [userId, code],
+      (error, results) => {
+        if (error) {
+          console.error("Database error:", error);
+          return res.status(500).json({ message: "Database error" });
+        }
+
+        if (results.length === 0) {
+          // Code not found or expired
+          return res.status(400).json({ message: "Invalid or expired code" });
+        }
+
+        // Code matches and is valid
+        return res.json({ message: "Code verified successfully" });
       }
-
-      if (results.length === 0) {
-        // Code not found or expired
-        return res.status(400).json({ message: "Invalid or expired code" });
-      }
-
-      // Code matches and is valid
-      return res.json({ message: "Code verified successfully" });
-    }
-  );
+    );
+  } catch (err) {
+    console.error("JWT verification error:", err);
+    res.status(401).json({ message: "Unauthorized or invalid token" });
+  }
 });
-
 
 module.exports = router;

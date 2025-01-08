@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
-const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 
 // Utility function to generate a random 6-digit code
 function generateCode() {
@@ -29,6 +29,13 @@ router.get("/confirmOTP", (req, res) => {
 
   //   res.render("register", { errors: {} });
   res.render("confirmOTP", { token });
+});
+
+router.get("/resetPassword", (req, res) => {
+  const { token } = req.query; // Get the token from the query
+
+  //   res.render("register", { errors: {} });
+  res.render("resetPassword", { token });
 });
 
 router.post("/forget-password", (req, res) => {
@@ -122,18 +129,12 @@ router.post("/forget-password", (req, res) => {
       console.log("Email sent:", info.response);
     });
 
-    // Render success response or page
-    // return res.render("confirmOTP", {
-    //   message: "Verification code sent to your email.",
-    // });
-
     // In /forget-password route, after sending the email
     res.redirect(`/confirmOTP?token=${createTemporaryToken(userId)}`); // Redirecting to confirmOTP with userId
-
-    // res.redirect(`/confirmOTP?userId=${userId}`);
   });
 });
 
+//verify the code route
 router.post("/verify-code", (req, res) => {
   const { token, code } = req.body;
 
@@ -164,13 +165,59 @@ router.post("/verify-code", (req, res) => {
         }
 
         // Code matches and is valid
-        return res.json({ message: "Code verified successfully" });
+        // return res.json({ message: "Code verified successfully" });
+
+        res.redirect(`/confirmOTP?token=${token}`); // Redirecting to confirmOTP with userId
       }
     );
   } catch (err) {
     console.error("JWT verification error:", err);
     res.status(401).json({ message: "Unauthorized or invalid token" });
   }
+});
+
+// route to reset password
+router.post("/reset-password", (req, res) => {
+  const { password, confirm } = req.body;
+
+  console.log(password, confirm); // Log values for debugging
+
+  // Validation errors object
+  const errors = {
+    password: [],
+    confirm: [],
+  };
+
+  let isValid = true;
+
+  // Validate that both fields are provided
+  if (!password || !confirm) {
+    isValid = false;
+    if (!password) {
+      errors.password.push("Please enter the password!");
+    }
+    if (!confirm) {
+      errors.confirm.push("Please confirm the password!");
+    }
+  }
+
+  // Check if password and confirm are equal
+  if (password && confirm && password !== confirm) {
+    isValid = false;
+    errors.confirm.push("Confirm password did not match the password!");
+    console.log("Passwords do not match");
+  }
+
+  // If validation fails, re-render the form with errors
+  if (!isValid) {
+    return res.render("resetPassword", { errors });
+  }
+
+  console.log("confirmed password");
+
+  // Hash the password synchronously using bcrypt
+  const saltRounds = 10; // Define salt rounds
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
 });
 
 module.exports = router;

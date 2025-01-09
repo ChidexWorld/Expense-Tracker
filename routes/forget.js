@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // Utility function to generate a random 6-digit code
 function generateCode() {
   return String(Math.floor(100000 + Math.random() * 900000)); // 6-digit code
 }
 
-function createTemporaryToken(userId) {
+function createTemporaryToken(jwt_token) {
   const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
-  return jwt.sign({ userId }, secret, { expiresIn: "15m" }); //15-minute validity
+  return jwt.sign({ jwt_token }, secret, { expiresIn: "15m" }); //15-minute validity
 }
 
 const nodemailer = require("nodemailer");
@@ -38,6 +38,7 @@ router.get("/resetPassword", (req, res) => {
   res.render("resetPassword", { token });
 });
 
+//forget password router
 router.post("/forget-password", (req, res) => {
   let { email } = req.body;
 
@@ -147,7 +148,7 @@ router.post("/verify-code", (req, res) => {
     const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
     const decoded = jwt.verify(token, secret);
 
-    const userId = decoded.userId;
+    const userId = decoded.jwt_token;
 
     // Query the database to fetch the code for the user
     db.query(
@@ -167,7 +168,7 @@ router.post("/verify-code", (req, res) => {
         // Code matches and is valid
         // return res.json({ message: "Code verified successfully" });
 
-        res.redirect(`/confirmOTP?token=${token}`); // Redirecting to confirmOTP with userId
+        res.redirect(`/resetPassword?token=${createTemporaryToken(code)}`); // Redirecting to confirmOTP with userId
       }
     );
   } catch (err) {
@@ -178,9 +179,22 @@ router.post("/verify-code", (req, res) => {
 
 // route to reset password
 router.post("/reset-password", (req, res) => {
-  const { password, confirm } = req.body;
+  const { password, confirm, token } = req.body;
+  console.log(password, confirm, token); // Log values for debugging
 
-  console.log(password, confirm); // Log values for debugging
+  if (!token) {
+    return res.status(400).json({ message: "Token and code are required" });
+  }
+
+  let code;
+  try {
+    const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
+    const decoded = jwt.verify(token, secret);
+    code = decoded.jwt_token;
+  } catch (err) {
+    console.error("JWT verification error:", err);
+    return res.status(401).json({ message: "Invalid token" });
+  }
 
   // Validation errors object
   const errors = {
@@ -218,6 +232,43 @@ router.post("/reset-password", (req, res) => {
   // Hash the password synchronously using bcrypt
   const saltRounds = 10; // Define salt rounds
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+  console.log("Hashed Password:", hashedPassword);
+
+  // Update password and invalidate the token in the database
+  const updatePasswordSql = `
+    UPDATE users 
+    SET password = ? 
+    WHERE id = (
+      SELECT user_id FROM user_codes WHERE code = ?
+    );
+  `;
+
+  const updateTokenSql = `
+  UPDATE user_codes 
+  SET code = NULL 
+  WHERE code = ?;
+`;
+
+  db.query(updatePasswordSql, [hashedPassword, code], (err, result) => {
+    if (err) {
+      console.error("Error updating password:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ message: "Invalid verification code" });
+    }
+  });
+
+  db.query(updateTokenSql, [code], (err) => {
+    if (err) {
+      console.error("Error invalidating token:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    res.render("login", { message: "Password reset successful!" });
+  });
 });
 
 module.exports = router;

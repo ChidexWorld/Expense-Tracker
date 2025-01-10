@@ -4,49 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up Expense tracker</title>
+    <title>Sign up DexTrack</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
     <section class="reg-section">
-        <h1>Expense Tracker</h1>
+        <h1>DexTrack</h1>
 
-        <form action="/registerUser" method="POST" enctype="application/x-www-form-urlencoded">
-            <h2>Create a new account</h2>
-
-            <div>
-                <div>
-                    <label for="userName">UserName:</label>
-                    <input type="text" name="username" id="username"  placeholder="JohnDeo" required>
-                    <br>
-                </div>
+        <section class="formSection">
+            <form action="/registerUser" method="POST" enctype="application/x-www-form-urlencoded">
+                <h2>Create a new account</h2>
 
                 <div>
-                    <label for="email">Email:</label>
-                    <input name="email" id="email" type="email"  placeholder="example@gmail.com" required>
-                    <br>
-                </div>
+                    <div>
+                        <input type="text" name="username" id="username" placeholder="JohnDeo" required>
+                        <br>
+                        <% if (errors.username) { %><small>
+                                <%= errors.username[0] %>
+                            </small>
+                            <% } %>
+                    </div>
 
-                <div>
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password"  placeholder="password"  required>
-                    <br>
-                </div>
-                <div>
-                    <label for="confirm">Confirm Password:</label>
-                    <input type="password" name="confirm" id="confirm" placeholder="Confirm Password" required>
-                    <br>
+                    <div>
+                        <input name="email" id="email" type="email" placeholder="example@gmail.com" required>
+                        <br>
+                        <% if (errors.email) { %><small>
+                                <%= errors.email[0] %>
+                            </small>
+                            <% } %>
+                    </div>
 
+                    <div>
+                        <input type="password" name="password" id="password" placeholder="password" required>
+                        <br>
+                        <% if (errors.password) { %><small>
+                                <%= errors.password[0] %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div>
+                        <input type="password" name="confirm" id="confirm" placeholder="Confirm Password" required>
+                        <br>
+                        <% if (errors.confirm) { %><small>
+                                <%= errors.confirm[0] %>
+                            </small>
+                            <% } %>
+
+                    </div>
                 </div>
+                <button type="submit" class="submitBtn">Create Account</button><br>
+
+            </form>
+            <div class="link">
+                <a href="http://localhost:3000/login">i already have an account</a>
             </div>
-
-            <button type="submit" class="submitBtn">Create Account</button>
-            <a href="http://localhost:3000/">i already have an account</a>
-
-        </form>
-
+        </section>
 
     </section>
 </body>

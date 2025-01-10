@@ -2,40 +2,13 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 const bcrypt = require("bcryptjs");
-
-// Utility function to generate a random 6-digit code
-function generateCode() {
-  return String(Math.floor(100000 + Math.random() * 900000)); // 6-digit code
-}
-
-function createTemporaryToken(jwt_token) {
-  const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
-  return jwt.sign({ jwt_token }, secret, { expiresIn: "15m" }); //15-minute validity
-}
+const generateCode = require("../utils/generateCode");
 
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 
 router.get("/forgetPassword", (req, res) => {
-  //   res.render("register", { errors: {} });
-  res.render("forgetPassword", { title: "Register Page" });
-});
-
-router.get("/confirmOTP", (req, res) => {
-  const { token } = req.query; // Get the token from the query
-
-  console.log(token);
-
-  //   res.render("register", { errors: {} });
-  res.render("confirmOTP", { token });
-});
-
-router.get("/resetPassword", (req, res) => {
-  const { token } = req.query; // Get the token from the query
-
-  //   res.render("register", { errors: {} });
-  res.render("resetPassword", { token });
+  res.render("forgetPassword", { errors: null });
 });
 
 //forget password router
@@ -55,9 +28,9 @@ router.post("/forget-password", (req, res) => {
   if (!email) {
     isValid = false;
     errors.email.push("Please enter a email!");
-  } else if (email.length < 3) {
+  } else if (email.length < 4) {
     isValid = false;
-    errors.email.push("email must be at least 3 characters long.");
+    errors.email.push("email must be at least 4 characters long.");
   }
 
   // If validation fails, re-render the form with errors
@@ -96,7 +69,7 @@ router.post("/forget-password", (req, res) => {
     db.query(query, [userId, code, expiresAt], (insertErr, result) => {
       if (insertErr) {
         console.error("Error inserting user:", insertErr); // Log the error
-        if (err) return res.render("error", { error: insertErr });
+        if (err) return res.render("error", { error: insertErr.message });
         // Send error response
       }
     });
@@ -123,77 +96,58 @@ router.post("/forget-password", (req, res) => {
     transporter.sendMail(mailOptions, (emailErr, info) => {
       if (emailErr) {
         console.error("Error sending email:", emailErr);
-        return res
-          .status(500)
-          .json({ message: "Failed to send verification email." });
+        return res.render("forgetPassword", { errors });
+
+        // return res
+        //   .status(500)
+        //   .json({ message: "Failed to send verification email." });
       }
       console.log("Email sent:", info.response);
     });
 
-    // In /forget-password route, after sending the email
-    res.redirect(`/confirmOTP?token=${createTemporaryToken(userId)}`); // Redirecting to confirmOTP with userId
+    res.render("confirmOTP", { userId });
   });
 });
 
 //verify the code route
 router.post("/verify-code", (req, res) => {
-  const { token, code } = req.body;
+  const { userId, code } = req.body;
 
-  console.log(token);
-  if (!token || !code) {
-    return res.status(400).json({ message: "Token and code are required" });
+  console.log(userId);
+  if (!userId || !code) {
+    return res.status(400).json({ message: "userId and code are required" });
   }
 
-  try {
-    const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
-    const decoded = jwt.verify(token, secret);
-
-    const userId = decoded.jwt_token;
-
-    // Query the database to fetch the code for the user
-    db.query(
-      "SELECT * FROM user_codes WHERE user_id = ? AND code = ? AND expires_at > NOW()",
-      [userId, code],
-      (error, results) => {
-        if (error) {
-          console.error("Database error:", error);
-          return res.status(500).json({ message: "Database error" });
-        }
-
-        if (results.length === 0) {
-          // Code not found or expired
-          return res.status(400).json({ message: "Invalid or expired code" });
-        }
-
-        // Code matches and is valid
-        // return res.json({ message: "Code verified successfully" });
-
-        res.redirect(`/resetPassword?token=${createTemporaryToken(code)}`); // Redirecting to confirmOTP with userId
+  // Query the database to fetch the code for the user
+  db.query(
+    "SELECT * FROM user_codes WHERE user_id = ? AND code = ? AND expires_at > NOW()",
+    [userId, code],
+    (error, results) => {
+      if (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Database error" });
       }
-    );
-  } catch (err) {
-    console.error("JWT verification error:", err);
-    res.status(401).json({ message: "Unauthorized or invalid token" });
-  }
+
+      if (results.length === 0) {
+        // Code not found or expired
+        return res.status(400).json({ message: "Invalid or expired code" });
+      }
+
+      // Code matches and is valid
+      // return res.json({ message: "Code verified successfully" });
+
+      res.render("resetPassword", { code });
+    }
+  );
 });
 
 // route to reset password
 router.post("/reset-password", (req, res) => {
-  const { password, confirm, token } = req.body;
-  console.log(password, confirm, token); // Log values for debugging
+  const { password, confirm, code } = req.body;
+  console.log(password, confirm, code); // Log values for debugging
 
-  if (!token) {
-    return res.status(400).json({ message: "Token and code are required" });
-  }
-
-  let code;
-  try {
-    const secret = process.env.JWT_SECRET || "TDKhAbjKMr5bd2aUp7Y";
-    const decoded = jwt.verify(token, secret);
-    code = decoded.jwt_token;
-  } catch (err) {
-    console.error("JWT verification error:", err);
-    return res.status(401).json({ message: "Invalid token" });
+  if (!code) {
+    return res.status(400).json({ message: "code are required" });
   }
 
   // Validation errors object
@@ -267,7 +221,7 @@ router.post("/reset-password", (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    res.render("login", { message: "Password reset successful!" });
+    res.redirect("login");
   });
 });
 

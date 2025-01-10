@@ -7,32 +7,30 @@ var passport = require("passport");
 var LocalStrategy = require("passport-local");
 var session = require("express-session");
 const crypto = require("crypto");
-
-
+const flash = require("connect-flash");
 
 // Express-Session Configuration
 router.use(
   session({
-   secret: crypto.randomBytes(30).toString("hex"),
-    resave: false,             
-    saveUninitialized: false,  
+    secret: crypto.randomBytes(30).toString("hex"),
+    resave: false,
+    saveUninitialized: false,
   })
 );
 
 // Initialize Passport and use it with Express-Session
+router.use(flash());
 router.use(passport.initialize());
 router.use(passport.session());
 
-
 router.get("/signUp", (req, res) => {
-  //   res.render("register", { errors: {} });
-  res.render("register", { title: "Register Page" });
+  res.render("register", { errors: {} });
 });
 
 //register the user and hash them with passport
 router.post("/registerUser", (req, res) => {
   let { username, email, password, confirm } = req.body;
- 
+
   // trimming the fields
   username = username.trim();
   email = email.trim();
@@ -69,6 +67,9 @@ router.post("/registerUser", (req, res) => {
   if (!password) {
     isValid = false;
     errors.password.push("Please enter the password!");
+  } else if (password.length < 8) {
+    isValid = false;
+    errors.password.push("password must be at least 8 characters long.");
   }
 
   // Validate confirm password
@@ -86,18 +87,18 @@ router.post("/registerUser", (req, res) => {
   db.query(
     "SELECT * FROM users WHERE email = ? OR name = ?",
     [email, username],
-    (err, results) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ message: "Database error" });
+    (error, results) => {
+      if (error) {
+        console.error("Database error:", error);
+        return res.render("error", { error:error.message || "An unexpected error occurred." });
       }
 
       if (results.length > 0) {
+        if (results.some((user) => user.email === email)) isValid = false;
+        errors.email.push("Email already in use.");
+        if (results.some((user) => user.username === username)) isValid = false;
         isValid = false;
-        if (results.some((user) => user.email === email))
-          errors.email.push("Email already in use.");
-        if (results.some((user) => user.username === username))
-          errors.username.push("Username already taken.");
+        errors.username.push("Username already taken.");
 
         // Render the registration page with errors
         return res.render("register", { errors });
@@ -110,7 +111,7 @@ router.post("/registerUser", (req, res) => {
         // Store hash in your password DB.
         if (hashErr) {
           console.error("Error while hashing the password:", err);
-          return res.render("error", { error: hashErr });
+          return res.render("error", { error: hashErr.message });
         }
         console.log(hash);
 
@@ -122,24 +123,23 @@ router.post("/registerUser", (req, res) => {
           //error handling
           if (insertErr) {
             console.error("Error inserting user:", insertErr); // Log the error
-            if (err) return res.render("error", { error: insertErr });
+            if (err) return res.render("error", { error: insertErr.message});
             // Send error response
           }
           console.log("User registered with ID:", result.insertId);
           return res.redirect("login");
         });
       });
-    });
-
- });
+    }
+  );
+});
 
 //login algorithm using passport
 passport.use(
   //compare the username with the username provided
   new LocalStrategy(function verify(username, password, cb) {
-
     // trimming the fields
-   username = username.trim();
+    username = username.trim();
 
     db.query(
       //this should be query
@@ -203,22 +203,23 @@ passport.deserializeUser(function (id, cb) {
   });
 });
 
-
 router.get("/login", (req, res) => {
   //   res.render("register", { errors: {} });
-  res.render("login", { title: "Register Page" });
+  const error = req.flash("error")[0]; // Retrieve the first flash error message
+  console.log(error);
+  res.render("login", { error}); // Render the login EJS template with error and message
+
+  // res.render("login", { title: "Register Page" });
 });
 
 // Login route
 router.post(
   "/loginUser",
   passport.authenticate("local", {
-    successRedirect: "/",
+    successRedirect: "/dashboard",
     failureRedirect: "/login",
+    failureFlash: "Invalid username or password", // Flash error message
   })
 );
-
-
-
 
 module.exports = router;

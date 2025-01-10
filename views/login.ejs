@@ -4,42 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Expense tracker</title>
+    <title>Log in to DexTrack</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
     <section class="reg-section">
-        <h1>Expense Tracker</h1>
+        <h1>DexTrack</h1>
 
-        <form action="/loginUser" method="POST" enctype="application/x-www-form-urlencoded">
-            <h2>Sign in your account</h2>
+        <section class="formSection">
 
-            <div>
-                <div>
-                    <label for="userName">UserName:</label>
-                    <input type="text" name="username" id="username" placeholder="JohnDeo" required>
-                    <br>
-                </div>
+            <form action="/loginUser" method="POST" enctype="application/x-www-form-urlencoded">
+                <h2>Sign in your account</h2>
 
+                <% if (error) { %>
+                    <small class="message">
+                        <h3>Wrong credentials</h3>
+                        <%= error %>
+                    </small>
+                    <% } %>
 
+                        <div>
+                            <div>
+                                <input type="text" name="username" id="username" placeholder="Username" required>
+                                <br>
+                            </div>
 
-                <div>
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" placeholder="password" required>
-                    <br>
-                </div>
+                            <div>
+                                <input type="password" name="password" id="password" placeholder="password" required>
+                                <br>
+                            </div>
 
+                        </div>
+
+                        <button type="submit" class="submitBtn">Login</button>
+
+            </form>
+            <div class="link">
+                <a href="http://localhost:3000/forgetPassword">Forgot your Password? Click here to reset it.</a>
+                <hr>
+                <a href="http://localhost:3000/signUp">
+                    <button class="btn3"><strong>create new account</strong></button>
+                </a>
             </div>
-
-            <button type="submit" class="submitBtn">Login</button>
-            <div>
-                <a href="http://localhost:3000/">create a new account</a>
-                <a href="http://localhost:3000/">Forget password</a>
-            </div>
-
-        </form>
+        </section>
 
 
     </section>

@@ -11,13 +11,13 @@
 <body>
 
     <section class="reg-section">
-        <h1>Expense Tracker</h1>
+        <h1>DexTrack</h1>
 
         <form action="/verify-code" method="POST" enctype="application/x-www-form-urlencoded">
             <h2>Verify OTP</h2>
 
             <div>
-                <input type="hidden" name="token" value="<%= token %>"> 
+                <input type="hidden" name="userId" value="<%= userId %>"> 
 
                 <div>
                     <input type="num" name="code" id="num" placeholder="00000" required>

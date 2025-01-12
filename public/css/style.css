@@ -3,6 +3,7 @@ body {
     margin: 0;
     box-sizing: border-box;
     background-color: rgb(236, 233, 233);
+    font-family: "Poppins", serif;
 }
 
 h2 {
@@ -30,19 +31,22 @@ header {
 
 .btn1,
 .btn2,
-.btn3 {
-    background-color: green;
-    color: white;
+.btn3,
+.btn4 {
     height: 2rem;
     width: 6rem;
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    border: green 2px solid;
+    color: green;
 }
 
 .btn2 {
+    background-color: green;
     height: 2.5rem;
     width: 7rem;
+    color: white;
 }
 
 .text {
@@ -53,7 +57,7 @@ header {
     width: 30rem;
 }
 
-main {
+.homeMain {
     display: flex;
     height: 30rem;
     align-items: center;
@@ -79,6 +83,7 @@ main {
     box-shadow: 10px 10px 5px -3px rgba(156, 154, 154, 0.75);
     border-radius: 1rem;
     justify-content: center;
+    text-align: center;
 }
 
 .signupImg {
@@ -131,11 +136,13 @@ form a {
 .btn3 {
     width: 10rem;
     padding: 8px;
+    background-color: green;
+    color: white;
 }
 
 .link {
     display: flex;
-    flex-direction: column;
+    flex-directidashboardH1on: column;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
@@ -153,4 +160,19 @@ small {
     flex-direction: column;
     align-items: center;
     background-color: rgb(248, 225, 225);
+}
+
+.btn4 {
+    background-color: green;
+    color: white;
+}
+
+.username{
+    color: brown;
+}
+
+.dashboardSection1{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }

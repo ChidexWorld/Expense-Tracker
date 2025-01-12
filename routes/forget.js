@@ -42,7 +42,9 @@ router.post("/forget-password", (req, res) => {
   db.query("SELECT * FROM users WHERE email = ?", [email], (error, result) => {
     if (error) {
       console.error("Database error:", err);
-      return res.status(500).json({ message: "Database error" });
+      return res.render("error", {
+        error: error.message || "An unexpected error occurred.",
+      });
     }
 
     if (result.length === 0) {
@@ -105,7 +107,7 @@ router.post("/forget-password", (req, res) => {
       console.log("Email sent:", info.response);
     });
 
-    res.render("confirmOTP", { userId });
+    res.render("confirmOTP", { userId, error: null });
   });
 });
 
@@ -115,7 +117,10 @@ router.post("/verify-code", (req, res) => {
 
   console.log(userId);
   if (!userId || !code) {
-    return res.status(400).json({ message: "userId and code are required" });
+    return res.render("confirmOTP", {
+      error: "userId and code are required",
+      userId,
+    });
   }
 
   // Query the database to fetch the code for the user
@@ -125,18 +130,24 @@ router.post("/verify-code", (req, res) => {
     (error, results) => {
       if (error) {
         console.error("Database error:", error);
-        return res.status(500).json({ message: "Database error" });
+        return res.render("error", {
+          error: error.message || "An unexpected error occurred.",
+        });
       }
 
       if (results.length === 0) {
         // Code not found or expired
-        return res.status(400).json({ message: "Invalid or expired code" });
+
+        return res.render("confirmOTP", {
+          error: "Invalid or expired code",
+          userId,
+        });
       }
 
       // Code matches and is valid
       // return res.json({ message: "Code verified successfully" });
 
-      res.render("resetPassword", { code });
+      res.render("resetPassword", { code, errors: {} });
     }
   );
 });
@@ -154,6 +165,7 @@ router.post("/reset-password", (req, res) => {
   const errors = {
     password: [],
     confirm: [],
+    code: [],
   };
 
   let isValid = true;
@@ -169,6 +181,15 @@ router.post("/reset-password", (req, res) => {
     }
   }
 
+  // Validate password
+  if (!password) {
+    isValid = false;
+    errors.password.push("Please enter the password!");
+  } else if (password.length < 8) {
+    isValid = false;
+    errors.password.push("password must be at least 8 characters long.");
+  }
+
   // Check if password and confirm are equal
   if (password && confirm && password !== confirm) {
     isValid = false;
@@ -178,7 +199,7 @@ router.post("/reset-password", (req, res) => {
 
   // If validation fails, re-render the form with errors
   if (!isValid) {
-    return res.render("resetPassword", { errors });
+    return res.render("resetPassword", { errors, code });
   }
 
   console.log("confirmed password");
@@ -189,7 +210,7 @@ router.post("/reset-password", (req, res) => {
 
   console.log("Hashed Password:", hashedPassword);
 
-  // Update password and invalidate the token in the database
+  // Update password and invalidate the code in the database
   const updatePasswordSql = `
     UPDATE users 
     SET password = ? 
@@ -198,7 +219,7 @@ router.post("/reset-password", (req, res) => {
     );
   `;
 
-  const updateTokenSql = `
+  const updateCodeSql = `
   UPDATE user_codes 
   SET code = NULL 
   WHERE code = ?;
@@ -207,21 +228,27 @@ router.post("/reset-password", (req, res) => {
   db.query(updatePasswordSql, [hashedPassword, code], (err, result) => {
     if (err) {
       console.error("Error updating password:", err);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.render("error", {
+        error: err.message || "An unexpected error occurred.",
+      });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(400).json({ message: "Invalid verification code" });
-    }
-  });
-
-  db.query(updateTokenSql, [code], (err) => {
-    if (err) {
-      console.error("Error invalidating token:", err);
-      return res.status(500).json({ message: "Internal server error" });
+      isValid = false;
+      errors.code.push("Invalid verification code! Resend OTP");
+      return res.render("resetPassword", { errors, code });
     }
 
-    res.redirect("login");
+    db.query(updateCodeSql, [code], (err) => {
+      if (err) {
+        console.error("Error invalidating token:", err);
+        return res.render("error", {
+          error: err.message || "An unexpected error occurred.",
+        });
+      }
+
+      res.redirect("login");
+    });
   });
 });
 

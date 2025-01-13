@@ -15,6 +15,9 @@ router.use(
     secret: crypto.randomBytes(30).toString("hex"),
     resave: false,
     saveUninitialized: false,
+    cookie:{
+      maxAge: 1000 * 60 * 30
+    }
   })
 );
 

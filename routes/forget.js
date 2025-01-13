@@ -99,10 +99,6 @@ router.post("/forget-password", (req, res) => {
       if (emailErr) {
         console.error("Error sending email:", emailErr);
         return res.render("forgetPassword", { errors });
-
-        // return res
-        //   .status(500)
-        //   .json({ message: "Failed to send verification email." });
       }
       console.log("Email sent:", info.response);
     });

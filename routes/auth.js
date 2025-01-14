@@ -8,6 +8,7 @@ var LocalStrategy = require("passport-local");
 var session = require("express-session");
 const crypto = require("crypto");
 const flash = require("connect-flash");
+const ifAuthenticated = require("../middlewares/ifAuthenticated")
 
 // Express-Session Configuration
 router.use(
@@ -206,7 +207,7 @@ passport.deserializeUser(function (id, cb) {
   });
 });
 
-router.get("/login", (req, res) => {
+router.get("/login", ifAuthenticated,(req, res) => {
   //   res.render("register", { errors: {} });
   const error = req.flash("error")[0]; // Retrieve the first flash error message
   console.log(error);
@@ -224,5 +225,21 @@ router.post(
     failureFlash: "Invalid username or password", // Flash error message
   })
 );
+
+// Logout route
+router.get("/logout", (req, res) => {
+  // Log the user out using Passport
+  req.logout((err) => {
+    if (err) {
+      console.error("Error during logout:", err);
+      return res.render("error", {
+        error: "Error logging out, please try again.",
+      });
+    }
+    // Successfully logged out, redirect to the login page
+    req.session.destroy(); // Optional: Clear the session completely
+    return res.redirect("/");
+  });
+});
 
 module.exports = router;

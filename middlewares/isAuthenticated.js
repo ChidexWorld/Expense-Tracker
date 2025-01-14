@@ -1,5 +1,3 @@
-// isAuthenticated.js
-
 // Middleware to check if a user is authenticated
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated() || req.user) {
@@ -7,7 +5,7 @@ function isAuthenticated(req, res, next) {
     return next();
   }
   // Redirect to login if not authenticated
-  res.render("login", { error:"session timeout"});
+  res.render("login", { error: "Session timeout. Please log in again." });
 }
 
 module.exports = isAuthenticated;

@@ -186,3 +186,15 @@ small {
 i {
     color: green;
 }
+
+.btnDivDashboard, .btnHomeli{
+     width: 20rem;
+     height: 2.5rem;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+
+.btnHomeli {
+    width: 13rem;
+}

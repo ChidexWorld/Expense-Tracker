@@ -34,11 +34,19 @@
 
     <main class="dashboardMain">
         <div class="dashboardSection1">
-            <h1>WELCOME BACK <span class="username"><%= username %></span> </h1>
-            <h1>you have 0 expenses totaling &#8358 0</h1>
-            <a href="http://localhost:3000/addExpense">
-                <button class="btn2"><strong>Add Expenses</strong></button>
-            </a>
+            <h1>WELCOME BACK <span class="username">
+                    <%= username %>
+                </span> </h1>
+            <h1>you have <%= expenseCount %> expenses totaling &#8358 <%= totalAmount %>
+            </h1>
+            <div class="btnDivDashboard">
+                <a href="http://localhost:3000/addExpense">
+                    <button class="btn2"><strong>Add Expenses</strong></button>
+                </a>
+                <a href="http://localhost:3000/setBudget">
+                    <button class="btn2"><strong>Set Budget</strong></button>
+                </a>
+            </div>
         </div>
     </main>
 </body>

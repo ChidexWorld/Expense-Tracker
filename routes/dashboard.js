@@ -15,6 +15,14 @@ const categories = [
   "Housing",
 ];
 
+const expenses = [
+  { date: "2025-01-01", expense: 50 },
+  { date: "2025-01-02", expense: 70 },
+  { date: "2025-01-03", expense: 90 },
+  { date: "2025-01-04", expense: 40 },
+  { date: "2025-01-05", expense: 100 },
+];
+
 router.get("/dashboard", isAuthenticated, (req, res) => {
   console.log("we are in the dashboard");
 
@@ -35,7 +43,12 @@ router.get("/dashboard", isAuthenticated, (req, res) => {
     }
 
     const { expenseCount = 0, totalAmount = 0 } = result[0]; // Default to 0 if no rows found
-    return res.render("dashboard", { username, totalAmount, expenseCount });
+    return res.render("dashboard", {
+      username,
+      totalAmount,
+      expenseCount,
+      expenses,
+    });
   });
 });
 

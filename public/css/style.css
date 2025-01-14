@@ -198,3 +198,8 @@ i {
 .btnHomeli {
     width: 13rem;
 }
+
+.dashboardSection2{
+    border: solid red;
+    width: 50%;
+}

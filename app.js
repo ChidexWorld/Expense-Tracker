@@ -13,6 +13,8 @@ const dashboardRoutes = require('./routes/dashboard');
 // Set EJS as the template engine
 app.set("view engine", "ejs");
 
+app.use("/scripts", express.static(__dirname + "/scripts"));
+
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 

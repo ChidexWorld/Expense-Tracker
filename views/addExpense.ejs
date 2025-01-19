@@ -11,75 +11,139 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
 </head>
 
 <body>
 
-    <section class="reg-section">
-        <h1>DexTrack</h1>
+    <main>
+        <div class="dashboard">
+            <%- include('partials/aside') %>
 
-        <section class="formSection">
-            <form action="/addExpense" method="POST" enctype="application/x-www-form-urlencoded">
-                <h2>Add Expense</h2>
+                <div class="column expenseColumn">
 
-                <div>
-                 
-                    <div>
-                        <input type="text" name="description" id="description" placeholder="Description" required>
-                        <br>
-                        <% if (errors.description) { %><small>
-                                <%= errors.description[0] %>
-                            </small>
-                            <% } %>
-                    </div>
+                    <section class="expense-form">
+                        <section class="expenseFormSection">
+                            <form action="/addExpense" method="POST" enctype="application/x-www-form-urlencoded">
+                                <h2>Add Expense</h2>
 
-                    <div>
-                        <select id="category" name="category" required>
+                                <div>
 
-                            <option value="" disabled selected>Select your opinion</option>
-                            <% categories.forEach(category=> { %>
-                                <option value="<%= category %>">
-                                    <%= category %>
-                                </option>
-                                <% }) %>
-                        </select>
-                        <% if(errors ) { %>
-                            <p style="color: red">
-                                <%= errors.category %>
-                            </p>
-                            <% } %>
-                    </div>
+                                    <div>
+                                        <input type="text" name="description" id="description" placeholder="Description"
+                                            required>
+                                        <br>
+                                        <% if (errors.description) { %><small>
+                                                <%= errors.description[0] %>
+                                            </small>
+                                            <% } %>
+                                    </div>
 
-                    <div>
-                        <input type="number" name="amount" id="amount" placeholder="Amount" required>
-                        <br>
-                        <% if (errors.amount) { %><small>
-                                <%= errors.amount[0] %>
-                            </small>
-                            <% } %>
-                    </div>
-                    <div>
-                        <input type="date" name="date" id="date" required>
-                        <br>
-                        <% if (errors.date) { %><small>
-                                <%= errors.date[0] %>
-                            </small>
-                            <% } %>
+                                    <div>
+                                        <select id="category" name="category" required>
 
-                    </div>
+                                            <option value="" disabled selected>Select your opinion</option>
+                                            <% categories.forEach(category=> { %>
+                                                <option value="<%= category %>">
+                                                    <%= category %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                        <% if(errors ) { %>
+                                            <p style="color: red">
+                                                <%= errors.category %>
+                                            </p>
+                                            <% } %>
+                                    </div>
+
+                                    <div>
+                                        <input type="number" name="amount" id="amount" placeholder="Amount" required>
+                                        <br>
+                                        <% if (errors.amount) { %><small>
+                                                <%= errors.amount[0] %>
+                                            </small>
+                                            <% } %>
+                                    </div>
+                                    <div>
+                                        <input type="date" name="date" id="date" required>
+                                        <br>
+                                        <% if (errors.date) { %><small>
+                                                <%= errors.date[0] %>
+                                            </small>
+                                            <% } %>
+
+                                    </div>
 
 
+
+                                </div>
+                                <button type="submit" class="submitBtn">Add</button><br>
+
+                            </form>
+                            <!-- <div class="link">
+                                <a href="http://localhost:3000/dashboard">Go back to dashboard</a>
+                            </div> -->
+                        </section>
+
+                    </section>
+
+                    <section class="history-container">
+                        <h1>Recent Expenses</h1>
+                        <% if (transactions.length===0) { %>
+                            <p>No transactions found.</p>
+                            <% } else { %>
+
+                                <% transactions.forEach(transaction=> { %>
+                                    <div class="history-list">
+                                        <h3 contenteditable="true"
+                                            onkeydown="handleEnter(event, '<%= transaction.id %>', this)">
+
+
+                                            <%= transaction.description %>
+                                        </h3>
+                                        <div class="date-amount-container">
+                                            <div class="date-amount">
+                                                <p>
+                                                    &#8358
+                                                    <span>
+                                                        <%= transaction.amount %>
+                                                    </span>
+                                                </p>
+                                                <p>
+                                                    <i class="fa-regular fa-calendar-days"></i>
+                                                    <%= new Date(transaction.expense_date).toISOString().split("T")[0]
+                                                        %>
+                                                </p>
+                                                <p>
+                                                    <i class="fa-solid fa-message"></i>
+                                                    <%= transaction.category %>
+                                                </p>
+                                            </div>
+                                            <div class="trash">
+                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                                        <% } %>
+
+                    </section>
 
                 </div>
-                <button type="submit" class="submitBtn">Add</button><br>
 
-            </form>
-            <div class="link">
-                <a href="http://localhost:3000/dashboard">Go back to dashboard</a>
-            </div>
-        </section>
+        </div>
+    </main>
 
-    </section>
+    <script src="/scripts/edits.js"></script>
+
 </body>
 
 </html>

@@ -1,0 +1,45 @@
+<aside class="column">
+    <div>
+        <div class="avater-container">
+            <div class="avater">
+                <img src="images/avater.svg" alt="avater" class="avater-Img">
+            </div>
+            <h6 class="avater-name">
+                <span class="username">
+                    <%= username.toUpperCase() %>
+                </span>
+                WELCOME BACk
+            </h6>
+        </div>
+        
+        <div class="dashboard-nav-container">
+            <ul class="dashboard-nav">
+                <li>
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/addExpense" class="nav-link">
+                        <i class="fa-solid fa-money-bill"></i>
+                        Expenses
+                    </a>
+                </li>
+                <li>
+                    <a href="/setBudget" class="nav-link">
+                        <i class="fa-solid fa-wallet"></i>
+                        Budget
+                    </a>
+                </li>
+            </ul>
+        
+        </div>
+    </div>
+    <li class="dashboard-nav-list">
+        <a href="/logout" class="nav-link">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </li>
+</aside>

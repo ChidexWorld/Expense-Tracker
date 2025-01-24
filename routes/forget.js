@@ -203,7 +203,7 @@ router.post("/reset-password", (req, res) => {
   // Hash the password synchronously using bcrypt
   const saltRounds = 10; // Define salt rounds
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
-
+h;
   console.log("Hashed Password:", hashedPassword);
 
   // Update password and invalidate the code in the database

@@ -311,13 +311,14 @@ aside {
 .chart-container {
     display: grid;
     grid-template-columns: 50% 50%;
-    /* Default: Two columns */
-    grid-template-rows: auto;
-    /* Rows adjust automatically */
+    grid-template-rows: auto auto;
     gap: 10px;
-    /* Spacing between items */
     padding: 10px;
-    /* Optional padding for the container */
+}
+
+.chart-container>.third-row {
+    grid-column: 1 / -1;
+    grid-row: 2;
 }
 
 .chart-item {
@@ -325,7 +326,7 @@ aside {
     align-items: center;
     justify-content: center;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 12px;
     font-size: 1.2rem;
     font-weight: bold;
     min-height: 100px;
@@ -339,7 +340,8 @@ aside {
     gap: 1.5rem;
 }
 
-.fa-calendar-days, .fa-message {
+.fa-calendar-days,
+.fa-message {
     margin-right: 0.4rem;
 }
 
@@ -357,6 +359,7 @@ aside {
     justify-content: center;
     align-items: center;
     background-color: red;
+    cursor: pointer;
 }
 
 .history-list {
@@ -373,7 +376,7 @@ aside {
     margin-top: 0.4rem;
 }
 
-.expenseColumn{
+.expenseColumn {
     display: flex;
     gap: 1rem;
 }
@@ -387,4 +390,33 @@ aside {
     .chart-container {
         grid-template-columns: 1fr;
     }
+}
+
+.radio {
+    width: 1rem;
+}
+
+.radio-parent {
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+}
+
+table {
+
+    border-collapse: collapse;
+    width: 80%;
+    text-align: center;
+}
+
+td , th{
+    border: solid gray 2px;
+    height: 4rem;
+    width: auto;
+}
+
+.trashTd{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

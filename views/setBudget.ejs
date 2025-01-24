@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Expense</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <main>
+        <div class="dashboard">
+            <%- include('partials/aside') %>
+
+                <div class="column">
+
+                    <div class="expenseColumn">
+                        <section class="expense-form">
+                            <section class="expenseFormSection">
+                                <div class="radio-parent">
+                                    <input type="radio" name="budgetType" class="radio" id="categoryRadio" value="radio"
+                                        required>
+                                    <p>Category-Specific Budget</p>
+                                </div>
+                                <form action="/addCategoryBudget" method="POST"
+                                    enctype="application/x-www-form-urlencoded" id="categoryForm">
+
+                                    <div>
+                                        <div>
+                                            <select id="category" name="category" required>
+
+                                                <option value="" disabled selected>Select your opinion</option>
+                                                <% categories.forEach(category=> { %>
+                                                    <option value="<%= category %>">
+                                                        <%= category %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                            <% if(errors ) { %>
+                                                <p style="color: red">
+                                                    <%= errors.category %>
+                                                </p>
+                                                <% } %>
+                                        </div>
+
+                                        <div>
+                                            <input type="number" name="amount" id="amount" placeholder="Amount"
+                                                required>
+                                            <br>
+                                            <% if (errors.amount) { %><small>
+                                                    <%= errors.amount[0] %>
+                                                </small>
+                                                <% } %>
+                                        </div>
+
+                                        <div>
+                                            <input type="text" name="description" id="description"
+                                                placeholder="Description" required>
+                                            <br>
+                                            <% if (errors.description) { %><small>
+                                                    <%= errors.description[0] %>
+                                                </small>
+                                                <% } %>
+                                        </div>
+
+                                    </div>
+                                    <button type="submit" class="submitBtn">Set</button><br>
+
+                                </form>
+
+                            </section>
+
+                        </section>
+
+                        <section>
+                            <div class="radio-parent">
+                                <input type="radio" name="budgetType" id="overallRadio" class="radio" value="overall"
+                                    required>
+                                <p for="overall">Overall Budget</p>
+                            </div>
+                            <form action="addOverallBudget" id="overallForm" method="POST">
+                                <div>
+
+                                    <div>
+                                        <input type="number" name="amount" id="amount" placeholder="Amount" required>
+                                        <br>
+                                        <% if (errors.amount) { %><small>
+                                                <%= errors.amount[0] %>
+                                            </small>
+                                            <% } %>
+                                    </div>
+
+                                    <div>
+                                        <input type="text" name="description" id="description" placeholder="Description"
+                                            required>
+                                        <br>
+                                        <% if (errors.description) { %><small>
+                                                <%= errors.description[0] %>
+                                            </small>
+                                            <% } %>
+                                    </div>
+
+                                </div>
+                                <button type="submit" class="submitBtn">Set</button><br>
+                            </form>
+                        </section>
+                    </div>
+
+                    <section>
+                        <h2>Overall Budgets</h2>
+                        <% if (overallBudgets.length> 0) { %>
+                            <table>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>delete</th>
+                                </tr>
+                                <% overallBudgets.forEach(budget=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= budget.amount %>
+                                        </td>
+                                        <td>
+                                            <%= budget.description %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(budget.created_at).toLocaleDateString() %>
+                                        </td>
+                                        <td class="trashTd">
+                                            <div class="trash" onclick="deleteExpense('<%= overallBudgets.id %>')">
+                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </table>
+                            <% } else { %>
+                                <p>No overall budgets found.</p>
+                                <% } %>
+
+                                    <h2>Category-Specific Budgets</h2>
+                                    <% if (categoryBudgets.length> 0) { %>
+                                        <table>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Amount</th>
+                                                <th>Description</th>
+                                                <th>Date</th>
+                                                <th>delete</th>
+                                            </tr>
+                                            <% categoryBudgets.forEach(budget=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= budget.category %>
+                                                    </td>
+                                                    <td>
+                                                        <%= budget.amount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= budget.description %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(budget.created_at).toLocaleDateString() %>
+                                                    </td>
+                                                    <td class="trashTd">
+                                                        <div class="trash"
+                                                            onclick="deleteExpense('<%= categoryBudgets.id %>')">
+                                                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <% }) %>
+                                        </table>
+                                        <% } else { %>
+                                            <p>No category-specific budgets found.</p>
+                                            <% } %>
+
+
+                    </section>
+                </div>
+
+        </div>
+    </main>
+
+    <script src="/scripts/budget.js"></script>
+    <script src="/scripts/edits.js"></script>
+
+</body>
+
+</html>

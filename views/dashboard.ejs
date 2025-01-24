@@ -23,55 +23,14 @@
 </head>
 
 <body>
-    <!-- <header>
-        <h2>DexTrack</h2>
-        <ul class="dashbordul">
-            <li>
-                <a href="/logout" class="logout-link">
-                    <i class="fa-regular fa-user"></i>
-                </a>
-            </li>
-            <li>
-                <a href="/logout" class="logout-link">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </a>
-            </li>
-        </ul>
-    </header> -->
 
-    <!-- <main class="dashboardMain">
-        <section class="dashboardSection1">
-            <h1>WELCOME BACK <span class="username">
-                    <%= username %>
-                </span> </h1>
-            <h1>you have <%= expenseCount %> expenses totaling &#8358 <%= totalAmount %>
-            </h1><i class="fa-solid fa-trash"></i>
-
-            <div class="btnDivDashboard">
-                <a href="http://localhost:3000/addExpense">
-                    <button class="btn2"><strong>Add Expenses</strong></button>
-                </a>
-                <a href="http://localhost:3000/setBudget">
-                    <button class="btn2"><strong>Set Budget</strong></button>
-                </a>
-            </div>
-
-        </section>
-
-        <section class="dashboardSection2">
-            <div class="lineChart">
-                <canvas id="lineChart" width="800" height="400"></canvas>
-            </div>
-        </section>
-    </main> -->
-    
     <main>
         <div class="dashboard">
-            
+
             <%- include('partials/aside') %>
-            
-            
-            <!-- Column 2 -->
+
+
+                <!-- Column 2 -->
                 <div class="column">
                     <div class="dashboard-header">
                         <h2>All Transactions</h2>
@@ -85,7 +44,7 @@
                     </div>
 
                     <hr>
-                    
+
                     <div class="dashboard-section-1">
                         <div class="sum-counts">
                             <h5>Total Expenses</h5>
@@ -98,7 +57,7 @@
                         <div class="sum-counts">
                             <h5>Total Budget</h5>
                             <h3>
-                                <span>&#8358 <%= totalAmount %></span>
+                                <span>&#8358 <%= totalBudget %></span>
                                 <i class="fa-solid fa-money-bill"> </i>
                             </h3>
                         </div>
@@ -106,26 +65,36 @@
                         <div class="sum-counts">
                             <h5>Total Balance</h5>
                             <h3>
-                                <span>&#8358 <%= totalAmount %></span>
+                                <span>&#8358 <%= totalBalance %></span>
                                 <i class="fa-solid fa-money-bill"> </i>
                             </h3>
                         </div>
                     </div>
-                    
+
                     <div class="chart-container">
                         <div class="chart-item">
                             <canvas id="lineChart" width="800" height="400"></canvas>
                         </div>
-                        <div class="chart-item">2</div>
-                        <div class="chart-item">3</div>
-                        <div class="chart-item">4</div>
+                        <div class="chart-item">
+                            <canvas id="categoryExpensesChart" width="400" height="400"></canvas>
+                        </div>
+                        <div class="chart-item third-row">
+                            <canvas id="myChart" width="450" height="200"></canvas>
+                        </div>
                     </div>
                 </div>
         </div>
     </main>
     <input type="hidden" id="expensesData" value='<%- JSON.stringify(expenses) %>' />
+    <input type="hidden" id="categoriesData" value='<%- JSON.stringify(categories) %>'>
+    <input type="hidden" id="categoryExpenseAmountData" value='<%- JSON.stringify(categoryExpenseAmount) %>'>
+    <input type="hidden" id="categoryAmount" value='<%- JSON.stringify(categoryExpenseAmount) %>'>
+    <input type="hidden" id="allocatedBudgetsData" value='<%- JSON.stringify(allocatedBudgets) %>'>
+
+
 
     <script src="/scripts/chart.js"></script>
+    <script src="/scripts/barChart.js"></script>
 </body>
 
 </html>

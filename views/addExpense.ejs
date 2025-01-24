@@ -104,30 +104,34 @@
                                 <% transactions.forEach(transaction=> { %>
                                     <div class="history-list">
                                         <h3 contenteditable="true"
-                                            onkeydown="handleEnter(event, '<%= transaction.id %>', this)">
-
-
+                                            onkeydown="handleEnter(event, '<%= transaction.id %>', 'description',this)">
                                             <%= transaction.description %>
                                         </h3>
                                         <div class="date-amount-container">
                                             <div class="date-amount">
                                                 <p>
                                                     &#8358
-                                                    <span>
+                                                    <span contenteditable="true"
+                                                        onkeydown="handleEnter(event, '<%= transaction.id %>', 'amount',this)">
                                                         <%= transaction.amount %>
                                                     </span>
                                                 </p>
                                                 <p>
                                                     <i class="fa-regular fa-calendar-days"></i>
-                                                    <%= new Date(transaction.expense_date).toISOString().split("T")[0]
-                                                        %>
+                                                    <span contenteditable="true"
+                                                        onkeydown="handleEnter(event, '<%= transaction.id %>', 'expense_date', this)">
+                                                        <%= new
+                                                            Date(transaction.expense_date).toISOString().split('T')[0]
+                                                            %>
+                                                    </span>
                                                 </p>
+
                                                 <p>
                                                     <i class="fa-solid fa-message"></i>
                                                     <%= transaction.category %>
                                                 </p>
                                             </div>
-                                            <div class="trash">
+                                            <div class="trash" onclick="deleteExpense('<%= transaction.id %>')">
                                                 <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                             </div>
                                         </div>

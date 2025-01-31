@@ -77,7 +77,14 @@ router.get("/dashboard", isAuthenticated, (req, res) => {
     }
 
     const recentOverallBudget = overallResult[0];
-    const totalOverallBudget = parseInt(recentOverallBudget.totalOverallBudget);
+    console.log("Recent Overall Budget:", recentOverallBudget);
+
+    let totalOverallBudget = 0; // Default value
+
+    if (recentOverallBudget && recentOverallBudget.totalOverallBudget) {
+      totalOverallBudget =
+        parseInt(recentOverallBudget.totalOverallBudget, 10) || 0;
+    }
 
     console.log(totalOverallBudget, recentOverallBudget);
 

@@ -325,11 +325,11 @@ aside {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #ccc;
     border-radius: 12px;
     font-size: 1.2rem;
     font-weight: bold;
     min-height: 100px;
+    height: 30rem;
     /* Ensures visible height for smaller screens */
 }
 

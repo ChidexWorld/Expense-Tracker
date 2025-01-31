@@ -130,7 +130,7 @@
                                     <th>Amount</th>
                                     <th>Description</th>
                                     <th>Date</th>
-                                    <th>delete</th>
+                                    <!-- <th>delete</th> -->
                                 </tr>
                                 <% overallBudgets.forEach(budget=> { %>
                                     <tr>
@@ -143,11 +143,11 @@
                                         <td>
                                             <%= new Date(budget.created_at).toLocaleDateString() %>
                                         </td>
-                                        <td class="trashTd">
+                                        <!-- <td class="trashTd">
                                             <div class="trash" onclick="deleteExpense('<%= overallBudgets.id %>')">
                                                 <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <% }) %>
                             </table>
@@ -163,7 +163,7 @@
                                                 <th>Amount</th>
                                                 <th>Description</th>
                                                 <th>Date</th>
-                                                <th>delete</th>
+                                                <!-- <th>delete</th> -->
                                             </tr>
                                             <% categoryBudgets.forEach(budget=> { %>
                                                 <tr>
@@ -179,12 +179,12 @@
                                                     <td>
                                                         <%= new Date(budget.created_at).toLocaleDateString() %>
                                                     </td>
-                                                    <td class="trashTd">
+                                                    <!-- <td class="trashTd">
                                                         <div class="trash"
                                                             onclick="deleteExpense('<%= categoryBudgets.id %>')">
                                                             <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                                         </div>
-                                                    </td>
+                                                    </td> -->
                                                 </tr>
 
                                                 <% }) %>
